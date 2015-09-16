@@ -1,0 +1,29 @@
+#!/bin/bash
+
+serverdirectory="/srv";
+
+data=$(date +%Y-%m-%d)
+datafile=$(date +%Y-%m-%d-%H-%M)
+backupdir=$serverdirectory"/backup/"
+
+echo "excluindo antigos backups"
+rm -rf "$backupdir"
+mkdir $backupdir
+
+echo "criando diretorio de backup"
+backupnow=$backupdir$data
+mkdir $backupnow
+
+diretorios=$(ls -d $serverdirectory/*/)
+
+for dir in $diretorios
+do
+
+if [ $dir != $backupdir ] ; then
+	echo $dir
+	name=${dir//"$serverdirectory"/}
+	name=${name///}
+        echo "compactando $dir"
+        tar czvf $backupnow"/"$name"-"$datafile".tar.gz" $dir
+    fi
+done
